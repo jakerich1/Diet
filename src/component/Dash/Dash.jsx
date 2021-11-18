@@ -66,10 +66,9 @@ const Dash = function (props) {
           setFetching(false);
         }
       })
-      .catch((error) => {
+      .catch(() => {
         if (isSubscribed) {
           setFetching(false);
-          console.log(error);
         }
       });
     return () => { isSubscribed = false; };
