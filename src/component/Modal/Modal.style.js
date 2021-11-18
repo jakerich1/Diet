@@ -17,11 +17,12 @@ export const ModalOuter = styled.div`
 
 export const ModalInner = styled.div`
     width: 80%;
-    min-height: 80%;
+    height: 80%;
     background: white;
     border-radius: 16px;
     padding: 1em;
     cursor: auto;
+    overflow: scroll;
 `;
 
 export const Action = styled(FlexContainer)`
