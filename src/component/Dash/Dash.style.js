@@ -3,6 +3,9 @@ import styled from 'styled-components';
 
 export const DashWrap = styled.div`
     padding: 1em;
+`;
+
+export const DashGrid = styled.div`
     display: grid;
     gap: 1em;
     grid-template-columns: 1fr 1fr;

@@ -24,7 +24,7 @@ const ProgressCont = function (props) {
   useEffect(() => {
     const progress = Math.round((current / target) * 100);
     setRemaining(target - current);
-    setPercent(progress);
+    setPercent(progress > 100 ? 100 : progress);
   }, [current, target]);
 
   return (

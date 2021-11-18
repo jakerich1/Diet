@@ -11,10 +11,18 @@ import {
   ModalOuter, ModalInner, Action, AddItem, Menu, InputNum, Line, Submit,
 } from './Modal.style';
 
+import { postFood, postWater } from '../../api/api';
+
 const Modal = function (props) {
   const {
     open,
     setOpen,
+    caloriesVal,
+    proteinVal,
+    waterVal,
+    targets,
+    setToggleData,
+    toggleData,
   } = props;
 
   // Event lister that closes the modal when the user
@@ -33,12 +41,26 @@ const Modal = function (props) {
   const [submittingFood, setSubmittingFood] = useState(false);
   const [submittingWater, setSubmittingWater] = useState(false);
 
+  // Form values
+  const [foodName, setFoodName] = useState('');
+  const [calories, setCalories] = useState('');
+  const [protein, setProtein] = useState('');
+  const [waterFormVal, setwaterFormVal] = useState('');
+
+  const [key, setKey] = useState('');
+
   // Handle the submit event for the food menu
   const submitFood = (e) => {
     e.preventDefault();
     if (!submittingFood) {
       setSubmittingFood(true);
-      console.log(e);
+      postFood(foodName, calories, protein, key).then(() => {
+        setToggleData(!toggleData);
+        setSubmittingFood(false);
+      }).catch((error) => {
+        console.log(error);
+        setSubmittingFood(false);
+      });
     }
   };
 
@@ -47,6 +69,13 @@ const Modal = function (props) {
     e.preventDefault();
     if (!submittingWater) {
       setSubmittingWater(true);
+      postWater(waterFormVal, key).then(() => {
+        setToggleData(!toggleData);
+        setSubmittingWater(false);
+      }).catch((error) => {
+        console.log(error);
+        setSubmittingWater(false);
+      });
       console.log(e);
     }
   };
@@ -79,26 +108,27 @@ const Modal = function (props) {
           <Menu>
             <ProgressCont
               title="Protein"
-              current={66}
-              target={160}
+              current={proteinVal}
+              target={targets.protein}
               unit="g"
               background="#FF5964"
               color="white"
             />
             <ProgressCont
               title="Calories"
-              current={1680}
-              target={2900}
+              current={caloriesVal}
+              target={targets.calories}
               unit=""
               background="#ffff59"
               color="black"
             />
             <Line />
             <form onSubmit={submitFood}>
-              <InputNum required type="text" placeholder="Enter Name of Food" min="1" max="124" step="1" />
-              <InputNum required type="number" placeholder="Enter Protein" step="1" />
-              <InputNum required type="number" placeholder="Enter calories" step="50" />
-              <Submit background={submittingFood ? 'grey' : '#FF5964'} type="submit">Add Food</Submit>
+              <InputNum value={foodName} onChange={(e) => { setFoodName(e.target.value); }} required type="text" placeholder="Enter Name of Food" min="1" max="124" step="1" />
+              <InputNum value={protein} onChange={(e) => { setProtein(e.target.value); }} required type="number" placeholder="Enter Protein" step="1" />
+              <InputNum value={calories} onChange={(e) => { setCalories(e.target.value); }} required type="number" placeholder="Enter calories" step="50" />
+              <InputNum value={key} onChange={(e) => { setKey(e.target.value); }} required type="number" placeholder="Enter key" />
+              <Submit background={submittingFood ? 'grey' : '#FF5964'} type="submit">{submittingFood ? 'submitting' : 'Add Food'}</Submit>
             </form>
           </Menu>
         ) : ''}
@@ -107,16 +137,17 @@ const Modal = function (props) {
           <Menu>
             <ProgressCont
               title="Calories"
-              current={500}
-              target={2000}
+              current={waterVal}
+              target={targets.water}
               unit="ml"
               background="#59c2ff"
               color="white"
             />
             <Line />
             <form onSubmit={submitWater}>
-              <InputNum required type="number" placeholder="Enter in ml" step="50" />
-              <Submit background={submittingWater ? 'grey' : '#59c2ff'} type="submit">Add Water</Submit>
+              <InputNum value={waterFormVal} onChange={(e) => { setwaterFormVal(e.target.value); }} required type="number" placeholder="Enter in ml" step="50" />
+              <InputNum value={key} onChange={(e) => { setKey(e.target.value); }} required type="number" placeholder="Enter key" />
+              <Submit background={submittingWater ? 'grey' : '#59c2ff'} type="submit">{submittingWater ? 'Submitting' : 'Add Water'}</Submit>
             </form>
           </Menu>
         ) : ''}
@@ -129,6 +160,13 @@ const Modal = function (props) {
 Modal.propTypes = {
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
+  caloriesVal: PropTypes.number.isRequired,
+  proteinVal: PropTypes.number.isRequired,
+  waterVal: PropTypes.number.isRequired,
+  setToggleData: PropTypes.func.isRequired,
+  toggleData: PropTypes.bool.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  targets: PropTypes.object.isRequired,
 };
 
 export default Modal;

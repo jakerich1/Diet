@@ -3,21 +3,22 @@ import {
   React, useEffect, useState,
 } from 'react';
 import { IconCirclePlus } from '@tabler/icons';
-import { format } from 'date-fns';
+import { DateTime } from 'luxon';
+import PropTypes from 'prop-types';
 import { NavCont, AddCont, NavTitle } from './Nav.style';
-import Modal from '../Modal/Modal';
 
-const Nav = function () {
-  const [open, setOpen] = useState(false);
+const Nav = function (props) {
+  const {
+    setOpen,
+  } = props;
 
   const [date, setDate] = useState('');
   useEffect(() => {
-    setDate(format(new Date(), 'MMM do'));
+    setDate(DateTime.now().toLocaleString({ month: 'long', day: 'numeric' }));
   }, []);
 
   return (
     <NavCont justify="space-between" align="center">
-      <Modal open={open} setOpen={setOpen} />
       <NavTitle>{date}</NavTitle>
       <AddCont onClick={() => { setOpen(true); }}>
         <IconCirclePlus
@@ -29,6 +30,10 @@ const Nav = function () {
       </AddCont>
     </NavCont>
   );
+};
+
+Nav.propTypes = {
+  setOpen: PropTypes.func.isRequired,
 };
 
 export default Nav;
